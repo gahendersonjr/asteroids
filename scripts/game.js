@@ -40,8 +40,8 @@ MyGame.main = (function (systems, input, renderer, graphics) {
 
     function render() {
         graphics.clear();
-        asteroidRenderer.render();
         shipRenderer.render();
+        asteroidRenderer.render();
         // smokeRenderer.render();
         // fireRenderer.render();
     }
