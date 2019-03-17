@@ -9,7 +9,7 @@ MyGame.systems.Asteroids = function () {
             center: getStartingLocation(),
             size: { x: size, y: size },
             direction: Random.nextCircleVector(),
-            speed: Random.nextGaussian(60, 10), // pixels per second
+            speed: Random.nextGaussian(200, 40), // pixels per second
             rotation: 0,
             alive: 0
         };
@@ -22,7 +22,7 @@ MyGame.systems.Asteroids = function () {
 
         elapsedTime = elapsedTime / 1000;
 
-        if (Random.nextRange(0,20)==0){
+        if (Random.nextRange(0,10)==0){
             objects[nextName++] = create();
         }
 
