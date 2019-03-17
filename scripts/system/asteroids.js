@@ -34,8 +34,7 @@ MyGame.systems.Asteroids = function () {
             object.center.y += (elapsedTime * object.speed * object.direction.y);
 
             object.rotation += object.speed / 2000;
-
-            if (object.center.x < 0 || object.center.x > 800 || object.center.y < 0 || object.center.y > 800) {
+            if (object.center.x < 0 || object.center.x > window.innerWidth || object.center.y < 0 || object.center.y >  window.innerHeight) {
                 removeMe.push(value);
             }
         });
@@ -46,15 +45,17 @@ MyGame.systems.Asteroids = function () {
     }
 
     function getStartingLocation(){
+      let width = window.innerWidth;
+      let height = window.innerHeight;
       switch (Random.nextRange(0,4)){
         case 0:
-          return { x: 800, y: Random.nextRange(0,800)};
+          return { x: width, y: Random.nextRange(0,height)};
         case 1:
-          return { x: Random.nextRange(0,800), y: 0};
+          return { x: Random.nextRange(0,width), y: 0};
         case 2:
-          return { x: Random.nextRange(0,800), y: 800};
+          return { x: Random.nextRange(0,width), y: height};
         case 3:
-          return { x: 0, y: Random.nextRange(0,800)};
+          return { x: 0, y: Random.nextRange(0,height)};
         default:
           break;
       }

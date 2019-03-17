@@ -68,3 +68,9 @@ MyGame.main = (function (systems, renderer, graphics) {
 
     requestAnimationFrame(gameLoop);
 }(MyGame.systems, MyGame.render, MyGame.graphics));
+
+function resize(){
+    let canvas = document.getElementById("id-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}

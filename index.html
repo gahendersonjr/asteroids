@@ -5,8 +5,8 @@
     <title>2D Particles</title>
     <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
 </head>
-<body>
-    <canvas id = "id-canvas" width = "800" height = "800"></canvas>
+<body onresize="resize()" onload="resize()">
+    <canvas id = "id-canvas"></canvas>
 
     <script>
         let MyGame = {
