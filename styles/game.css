@@ -8,5 +8,5 @@ body
     position: absolute;
     left: 0;
     top: 0;
-    background-color: black;
+    background: url('/assets/background.jpg')
 }
