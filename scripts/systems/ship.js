@@ -1,8 +1,3 @@
-//------------------------------------------------------------------
-//
-// Creates a Bird model based upon the passed in shipification.
-//
-//------------------------------------------------------------------
 MyGame.systems.Ship = function() {
 
     let ship = {
@@ -13,11 +8,9 @@ MyGame.systems.Ship = function() {
         rotateRate: Math.PI / 1000    // Radians per second
     }
     function moveForward(elapsedTime) {
-            //
             // Create a normalized direction vector
             let vectorX = Math.cos(ship.rotation);
             let vectorY = Math.sin(ship.rotation);
-            //
             // With the normalized direction vector, move the center of the sprite
             ship.center.x += (vectorX * ship.moveRate * elapsedTime);
             ship.center.y += (vectorY * ship.moveRate * elapsedTime);
