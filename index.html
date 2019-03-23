@@ -6,6 +6,10 @@
     <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
 </head>
 <body onresize="resize()" onload="resize()">
+    <iframe src="./assets/silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
+    <audio autoplay loop>
+        <source src="./assets/HeroImmortal.mp3" type="audio/mp3" >
+    </audio>
     <div id="buttons">
       <button onclick="startGame()" class="button" id="startGame">start game</button>
       <button onclick="highScores()" class="button" id="highScores">high scores</button>

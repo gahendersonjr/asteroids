@@ -1,6 +1,6 @@
 let canvas = document.getElementById("id-canvas");
 let context = canvas.getContext("2d");
-let highs = [0,0,0,0,0]
+let highs = [0,0,0,0,0];
 
 function startGame(){
   document.getElementById("startGame").classList.add("inactive");
@@ -10,9 +10,10 @@ function startGame(){
   document.getElementById("score").classList.remove("inactive");
   MyGame.main = (function (systems, input, renderer, graphics) {
       'use strict';
+      let laserAudio = new Audio('../assets/laser.wav');
       let score = 0;
       let level = 1;
-      let lives = 1;
+      let lives = 3;
       let hyperspace = 0;
       let paused = false;
       let gameOver = false;
@@ -112,6 +113,8 @@ function startGame(){
 
           if(shipX + shipW >= asteroidX && shipX <= asteroidX + asteroidW &&
             shipY + shipH >= asteroidY && shipY <= asteroidY + asteroidH){
+              let explosion = new Audio('../assets/explosion.wav');
+              explosion.play();
               if(lives==1){
                 gameOver = true;
               }else{
@@ -142,6 +145,8 @@ function startGame(){
             let laserY = ship.lasers[laser].center.y - laserH/2;
             if(laserX + laserW >= asteroidX && laserX <= asteroidX + asteroidW &&
               laserY + laserH >= asteroidY && laserY <= asteroidY + asteroidH){
+                let explosion = new Audio('../assets/explosion.wav');
+                explosion.play();
                 delete ship.lasers[laser];
                 score++;
                 computeStatusString();
@@ -175,7 +180,7 @@ function startGame(){
           x = Random.nextRange(100, window.innerWidth-100);
           y = Random.nextRange(100, window.innerHeight-100);
           Object.getOwnPropertyNames(asteroids.objects).forEach(function (asteroid) {
-            if(Math.abs(asteroids.objects[asteroid].center.x - x) < 150 && Math.abs(asteroids.objects[asteroid].center.x - x) < 150){
+            if(Math.abs(asteroids.objects[asteroid].center.x - x) < 120 && Math.abs(asteroids.objects[asteroid].center.x - x) < 120){
               found = false;
             }
           });
@@ -207,7 +212,8 @@ function startGame(){
          if(e.keyCode==32){ //space
            if(paused){
              paused = false;
-           } else {
+           } else if (!gameOver) {
+             laserAudio.play();
              ship.shoot();
            }
          }
