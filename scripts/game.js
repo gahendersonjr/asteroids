@@ -11,7 +11,8 @@ function startGame(){
   document.getElementById("score").classList.remove("inactive");
   MyGame.main = (function (systems, input, renderer, graphics) {
       'use strict';
-      console.log("hi");
+      let paused = false;
+      let gameOver = false;
       let lastTimeStamp = performance.now();
 
       let myKeyboard = input.Keyboard();
@@ -60,7 +61,9 @@ function startGame(){
       function gameLoop(time) {
           let elapsedTime = (time - lastTimeStamp);
           processInput(elapsedTime);
-          update(elapsedTime);
+          if (!paused){
+            update(elapsedTime);
+          }
           lastTimeStamp = time;
 
           render();
@@ -76,6 +79,13 @@ function startGame(){
       myKeyboard.register('ArrowRight', ship.rotateRight);
 
       requestAnimationFrame(gameLoop);
+
+      window.onkeyup = function(e) {
+         console.log(e.keyCode);
+         if(e.keyCode==27){
+           paused = !paused;
+         }
+      }
   }(MyGame.systems, MyGame.input, MyGame.render, MyGame.graphics));
 }
 
