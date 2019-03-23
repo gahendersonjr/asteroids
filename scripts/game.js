@@ -48,25 +48,8 @@ function startGame(){
           // particlesFire.update(elapsedTime);
           // particlesSmoke.update(elapsedTime);
           asteroids.update(elapsedTime);
-          Object.getOwnPropertyNames(asteroids.objects).forEach(function (value) {
-            let asteroidW = asteroids.objects[value].size.x *.65;
-            let asteroidH = asteroids.objects[value].size.y *.65;
-            let asteroidX = asteroids.objects[value].center.x - asteroidH/2;
-            let asteroidY = asteroids.objects[value].center.y - asteroidH/2;
-
-            let shipW = ship.ship.size.x *.65;
-            let shipH = ship.ship.size.y *.65;
-            let shipX = ship.ship.center.x - shipH/2;
-            let shipY = ship.ship.center.y - shipH/2;
-            // console.log(asteroid.center);
-            // console.log(ship.ship.center);
-            if(shipX + shipW >= asteroidX &&
-              shipX <= asteroidX + asteroidW &&
-              shipY + shipH >= asteroidY &&
-              shipY <= asteroidY + asteroidH){
-                paused = true;
-            }
-          });
+          asteroidCollisionDetection();
+          console.log(gameOver);
       }
 
 
@@ -105,7 +88,26 @@ function startGame(){
             document.getElementById("credits").classList.remove("inactive");
             document.getElementById("score").classList.add("inactive");
           }
-      };
+      }
+
+      function asteroidCollisionDetection(){
+        Object.getOwnPropertyNames(asteroids.objects).forEach(function (value) {
+          let asteroidW = asteroids.objects[value].size.x *.65;
+          let asteroidH = asteroids.objects[value].size.y *.65;
+          let asteroidX = asteroids.objects[value].center.x - asteroidH/2;
+          let asteroidY = asteroids.objects[value].center.y - asteroidH/2;
+
+          let shipW = ship.ship.size.x *.65;
+          let shipH = ship.ship.size.y *.65;
+          let shipX = ship.ship.center.x - shipH/2;
+          let shipY = ship.ship.center.y - shipH/2;
+          if(shipX + shipW >= asteroidX && shipX <= asteroidX + asteroidW &&
+            shipY + shipH >= asteroidY && shipY <= asteroidY + asteroidH){
+              gameOver = true;
+              return;
+          }
+        });
+      }
 
       myKeyboard.register('w', ship.moveForward);
       myKeyboard.register('a', ship.rotateLeft);
