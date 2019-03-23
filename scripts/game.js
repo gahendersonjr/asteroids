@@ -51,16 +51,16 @@ function startGame(){
           // particlesSmoke.update(elapsedTime);
           ship.laserUpdate(elapsedTime);
           asteroids.update(elapsedTime);
-          asteroidCollisionDetection();
+          laserasteroidShipCollisionDetection();
+          asteroidShipCollisionDetection();
       }
 
 
       function render() {
           graphics.clear();
           asteroidRenderer.render();
-
-          shipRenderer.render();
           laserRenderer.laserRender();
+          shipRenderer.render();
           // smokeRenderer.render();
           // fireRenderer.render();
       }
@@ -93,22 +93,43 @@ function startGame(){
           }
       }
 
-      function asteroidCollisionDetection(){
-        Object.getOwnPropertyNames(asteroids.objects).forEach(function (value) {
-          let asteroidW = asteroids.objects[value].size.x *.65;
-          let asteroidH = asteroids.objects[value].size.y *.65;
-          let asteroidX = asteroids.objects[value].center.x - asteroidH/2;
-          let asteroidY = asteroids.objects[value].center.y - asteroidH/2;
+      function asteroidShipCollisionDetection(){
+        let shipW = ship.ship.size.x *.65;
+        let shipH = ship.ship.size.y *.65;
+        let shipX = ship.ship.center.x - shipW/2;
+        let shipY = ship.ship.center.y - shipH/2;
+        Object.getOwnPropertyNames(asteroids.objects).forEach(function (asteroid) {
+          let asteroidW = asteroids.objects[asteroid].size.x *.65;
+          let asteroidH = asteroids.objects[asteroid].size.y *.65;
+          let asteroidX = asteroids.objects[asteroid].center.x - asteroidW/2;
+          let asteroidY = asteroids.objects[asteroid].center.y - asteroidH/2;
 
-          let shipW = ship.ship.size.x *.65;
-          let shipH = ship.ship.size.y *.65;
-          let shipX = ship.ship.center.x - shipH/2;
-          let shipY = ship.ship.center.y - shipH/2;
           if(shipX + shipW >= asteroidX && shipX <= asteroidX + asteroidW &&
             shipY + shipH >= asteroidY && shipY <= asteroidY + asteroidH){
               gameOver = true;
               return;
           }
+        });
+      }
+
+      function laserasteroidShipCollisionDetection(){
+        Object.getOwnPropertyNames(asteroids.objects).forEach(function (asteroid) {
+          let asteroidW = asteroids.objects[asteroid].size.x *.65;
+          let asteroidH = asteroids.objects[asteroid].size.y *.65;
+          let asteroidX = asteroids.objects[asteroid].center.x - asteroidW/2;
+          let asteroidY = asteroids.objects[asteroid].center.y - asteroidH/2;
+          Object.getOwnPropertyNames(ship.lasers).forEach(function (laser) {
+            let laserW = ship.lasers[laser].size.x;
+            let laserH = ship.lasers[laser].size.y;
+            let laserX = ship.lasers[laser].center.x - laserW/2;
+            let laserY = ship.lasers[laser].center.y - laserH/2;
+            if(laserX + laserW >= asteroidX && laserX <= asteroidX + asteroidW &&
+              laserY + laserH >= asteroidY && laserY <= asteroidY + asteroidH){
+                delete ship.lasers[laser];
+                delete asteroids.objects[asteroid];
+                return;
+            }
+          });
         });
       }
 
@@ -176,6 +197,6 @@ function controls(){
   context.fillText("controls:", 20, 200);
   context.fillText("rotate: left/right arrow keys", 40, 250);
   context.fillText("thrust: up arrow key", 40, 300);
-  context.fillText("fire lasser: spacebar", 40, 350);
+  context.fillText("fire laser: spacebar", 40, 350);
   context.fillText("hyperspace: z key", 40, 400);
 }

@@ -33,7 +33,6 @@ MyGame.systems.Ship = function() {
           speed: 700, // pixels per second
           rotation: ship.rotation
       };
-      console.log(laser.center);
       lasers[laserIndex++] = laser;
     }
 
