@@ -6,8 +6,16 @@
     <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
 </head>
 <body onresize="resize()" onload="resize()">
+    <div id="buttons">
+      <button onclick="startGame()" class="button" id="startGame">Start Game</button>
+      <button onclick="startGame()" class="button" id="highScores">High Scores</button>
+      <button onclick="startGame()" class="button" id="controls">Controls</button>
+      <button onclick="startGame()" class="button" id="credits">Credits</button>
+    </div>
+    <div id="score" class="inactive" onclick="gameOver()">
+      Score: 0
+    </div>
     <canvas id = "id-canvas"></canvas>
-
     <script>
         let MyGame = {
             systems: {},

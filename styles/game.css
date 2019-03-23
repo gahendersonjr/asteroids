@@ -1,12 +1,43 @@
 body
 {
     margin: 0;
+    background-color: black;
 }
 
 #id-canvas
 {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 40px;
     background: url('/assets/background.jpg')
+}
+
+.button {
+  height: 40px;
+  background-color: black;
+  color: greenyellow;
+  font-family: "Courier New";
+  font-size: 25px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: none;
+}
+
+.button:hover {
+  border: 2px solid greenyellow;
+}
+
+button:focus {outline:0;}
+
+.inactive {
+  display: none;
+}
+
+#score {
+  position: absolute;
+  right: 20px;
+  top: 8px;
+  color: greenyellow;
+  font-family: "Courier New";
+  font-size: 25px;
 }
