@@ -39,6 +39,8 @@ function startGame(){
           'assets/asteroid.png');
       let shipRenderer = renderer(ship, graphics,
           'assets/ship.png');
+      let laserRenderer = renderer(ship, graphics,
+          'assets/laser.png');
 
       function processInput(elapsedTime) {
           myKeyboard.update(elapsedTime);
@@ -47,16 +49,18 @@ function startGame(){
       function update(elapsedTime) {
           // particlesFire.update(elapsedTime);
           // particlesSmoke.update(elapsedTime);
+          ship.laserUpdate(elapsedTime);
           asteroids.update(elapsedTime);
           asteroidCollisionDetection();
-          console.log(gameOver);
       }
 
 
       function render() {
           graphics.clear();
-          shipRenderer.render();
           asteroidRenderer.render();
+
+          shipRenderer.render();
+          laserRenderer.laserRender();
           // smokeRenderer.render();
           // fireRenderer.render();
       }
@@ -68,15 +72,14 @@ function startGame(){
           if (!paused){
             update(elapsedTime);
             render();
+          } else {
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              context.fillStyle = "greenyellow";
+              context.font = "25px Courier New";
+              context.fillText("game pause", 20, 200);
+              context.fillText("press escape to quit", 40, 250);
+              context.fillText("press space to continue", 40, 300);
           }
-          // else {
-          //     context.clearRect(0, 0, canvas.width, canvas.height);
-          //     context.fillStyle = "greenyellow";
-          //     context.font = "25px Courier New";
-          //     context.fillText("game pause", 20, 200);
-          //     context.fillText("press escape to quit", 40, 250);
-          //     context.fillText("press space to continue", 40, 300);
-          // }
 
           if(!gameOver){
             requestAnimationFrame(gameLoop);
@@ -132,7 +135,7 @@ function startGame(){
            if(paused){
              paused = false;
            } else {
-             //fire laser
+             ship.shoot();
            }
          }
       }

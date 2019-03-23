@@ -16,8 +16,18 @@ MyGame.render = function (system, graphics, imageSrc) {
         }
     }
 
+    function laserRender() {
+        if (isReady) {
+            Object.getOwnPropertyNames(system.lasers).forEach(function (value) {
+                let laser = system.lasers[value];
+                graphics.drawTexture(image, laser.center, laser.rotation, laser.size);
+            });
+        }
+    }
+
     let api = {
-        render: render
+        render: render,
+        laserRender: laserRender
     };
 
     return api;

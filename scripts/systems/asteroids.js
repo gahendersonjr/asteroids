@@ -10,8 +10,7 @@ MyGame.systems.Asteroids = function () {
             size: { x: size, y: size },
             direction: Random.nextCircleVector(),
             speed: Random.nextGaussian(200, 40), // pixels per second
-            rotation: 0,
-            alive: 0
+            rotation: 0
         };
 
         return object;
@@ -29,7 +28,6 @@ MyGame.systems.Asteroids = function () {
         Object.getOwnPropertyNames(objects).forEach(value => {
             let object = objects[value];
 
-            object.alive += elapsedTime;
             object.center.x += (elapsedTime * object.speed * object.direction.x);
             object.center.y += (elapsedTime * object.speed * object.direction.y);
 
