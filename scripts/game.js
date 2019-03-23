@@ -12,10 +12,11 @@ function startGame(){
       'use strict';
       let score = 0;
       let level = 1;
-      let lives = 3;
+      let lives = 1;
       let hyperspace = 0;
       let paused = false;
       let gameOver = false;
+      let gameOverScreen = false;
       computeStatusString();
       let lastTimeStamp = performance.now();
 
@@ -60,6 +61,16 @@ function startGame(){
             asteroidRenderer.render();
             laserRenderer.laserRender();
             shipRenderer.render();
+          } else {
+              context.fillStyle = "greenyellow";
+              context.font = "25px Courier New";
+              context.fillText("game over", 20, 200);
+              context.fillText("you scored " + score, 40, 250);
+              document.getElementById("startGame").classList.remove("inactive");
+              document.getElementById("highScores").classList.remove("inactive");
+              document.getElementById("controls").classList.remove("inactive");
+              document.getElementById("credits").classList.remove("inactive");
+              document.getElementById("score").classList.add("inactive");
           }
       }
 
@@ -78,17 +89,7 @@ function startGame(){
               context.fillText("press escape to quit", 40, 250);
               context.fillText("press space to continue", 40, 300);
           }
-
-          // if(!gameOver){
-            requestAnimationFrame(gameLoop);
-          // } else {
-          //   context.clearRect(0, 0, canvas.width, canvas.height);
-          //   document.getElementById("startGame").classList.remove("inactive");
-          //   document.getElementById("highScores").classList.remove("inactive");
-          //   document.getElementById("controls").classList.remove("inactive");
-          //   document.getElementById("credits").classList.remove("inactive");
-          //   document.getElementById("score").classList.add("inactive");
-          // }
+          requestAnimationFrame(gameLoop);
       }
 
       function asteroidShipCollisionDetection(){
@@ -108,7 +109,14 @@ function startGame(){
                 particlesFire.create(ship.ship.center.x, ship.ship.center.y);
                 particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
               }
-              gameOver = true;
+              if(lives==1){
+                gameOver = true;
+              }else{
+                lives--;
+                computeStatusString();
+                ship.ship.center=findSafeLocation();
+              }
+
               return;
           }
         });
@@ -183,7 +191,9 @@ function startGame(){
          if(e.keyCode==27){ //escape
            if (paused) {
              gameOver = true;
-           } else {
+           } else if (gameOver){
+               context.clearRect(0, 0, canvas.width, canvas.height);
+           }else {
              paused = true;
            }
          }
