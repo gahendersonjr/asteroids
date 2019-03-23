@@ -1,3 +1,7 @@
+let canvas = document.getElementById("id-canvas");
+let context = canvas.getContext("2d");
+let highs = [0,0,0,0,0]
+
 function startGame(){
   console.log("hi");
   document.getElementById("startGame").classList.add("inactive");
@@ -79,4 +83,34 @@ function resize(){
     let canvas = document.getElementById("id-canvas");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight-40;
+}
+
+function highScores(){
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "greenyellow";
+  context.font = "25px Courier New";
+  context.fillText("high scores:", 20, 200);
+  context.fillText("1. " + highs[0], 20, 250);
+  context.fillText("2. " + highs[1], 20, 300);
+  context.fillText("3. " + highs[2], 20, 350);
+  context.fillText("4. " + highs[3], 20, 400);
+  context.fillText("5. " + highs[4], 20, 450);
+}
+
+function credits(){
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "greenyellow";
+  context.font = "25px Courier New";
+  context.fillText("by alan henderson", 20, 200);
+  context.fillText("(all art from opengameart.org)", 20, 250);
+}
+
+function controls(){
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "greenyellow";
+  context.font = "25px Courier New";
+  context.fillText("rotate: left/right arrow keys", 20, 200);
+  context.fillText("thrust: up arrow key", 20, 250);
+  context.fillText("fire lasser: spacebar", 20, 300);
+  context.fillText("hyperspace: z key", 20, 350);
 }

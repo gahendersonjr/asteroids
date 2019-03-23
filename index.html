@@ -7,13 +7,13 @@
 </head>
 <body onresize="resize()" onload="resize()">
     <div id="buttons">
-      <button onclick="startGame()" class="button" id="startGame">Start Game</button>
-      <button onclick="startGame()" class="button" id="highScores">High Scores</button>
-      <button onclick="startGame()" class="button" id="controls">Controls</button>
-      <button onclick="startGame()" class="button" id="credits">Credits</button>
+      <button onclick="startGame()" class="button" id="startGame">start game</button>
+      <button onclick="highScores()" class="button" id="highScores">high scores</button>
+      <button onclick="controls()" class="button" id="controls">controls</button>
+      <button onclick="credits()" class="button" id="credits">credits</button>
     </div>
     <div id="score" class="inactive" onclick="gameOver()">
-      Score: 0
+      score: 0 | level: 1 | lives: 3 | hyperspace: ready
     </div>
     <canvas id = "id-canvas"></canvas>
     <script>
