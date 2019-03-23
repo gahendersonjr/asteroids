@@ -55,17 +55,22 @@ function startGame(){
 
       function render() {
           graphics.clear();
-          smokeRenderer.render();
-          fireRenderer.render();
           if(!gameOver){
+            smokeRenderer.render();
+            fireRenderer.render();
             asteroidRenderer.render();
             laserRenderer.laserRender();
             shipRenderer.render();
           } else {
+              highs = highs.sort();
               context.fillStyle = "greenyellow";
               context.font = "25px Courier New";
               context.fillText("game over", 20, 200);
               context.fillText("you scored " + score, 40, 250);
+              if (score >= highs[0]){
+                context.fillText("you got a high score!", 40, 300);
+                highs[0]=score;
+              }
               document.getElementById("startGame").classList.remove("inactive");
               document.getElementById("highScores").classList.remove("inactive");
               document.getElementById("controls").classList.remove("inactive");
@@ -89,7 +94,9 @@ function startGame(){
               context.fillText("press escape to quit", 40, 250);
               context.fillText("press space to continue", 40, 300);
           }
-          requestAnimationFrame(gameLoop);
+          if (!gameOver){
+            requestAnimationFrame(gameLoop);
+          }
       }
 
       function asteroidShipCollisionDetection(){
@@ -105,13 +112,13 @@ function startGame(){
 
           if(shipX + shipW >= asteroidX && shipX <= asteroidX + asteroidW &&
             shipY + shipH >= asteroidY && shipY <= asteroidY + asteroidH){
-              for(let i = 0; i < 150; i++){
-                particlesFire.create(ship.ship.center.x, ship.ship.center.y);
-                particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
-              }
               if(lives==1){
                 gameOver = true;
               }else{
+                for(let i = 0; i < 150; i++){
+                  particlesFire.create(ship.ship.center.x, ship.ship.center.y);
+                  particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+                }
                 lives--;
                 computeStatusString();
                 ship.ship.center=findSafeLocation();
@@ -218,15 +225,16 @@ function resize(){
 }
 
 function highScores(){
+  highs = highs.sort();
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = "greenyellow";
   context.font = "25px Courier New";
   context.fillText("high scores:", 20, 200);
-  context.fillText("1. " + highs[0], 40, 250);
-  context.fillText("2. " + highs[1], 40, 300);
+  context.fillText("1. " + highs[4], 40, 250);
+  context.fillText("2. " + highs[3], 40, 300);
   context.fillText("3. " + highs[2], 40, 350);
-  context.fillText("4. " + highs[3], 40, 400);
-  context.fillText("5. " + highs[4], 40, 450);
+  context.fillText("4. " + highs[1], 40, 400);
+  context.fillText("5. " + highs[0], 40, 450);
 }
 
 function credits(){
