@@ -25,10 +25,11 @@ MyGame.systems.Ship = function() {
     }
 
     let api = {
-        // get size() { return ship.size; },
-        // get center() { return ship.center; },
+        get size() { return ship.size; },
+        get center() { return ship.center; },
         // get rotation() { return ship.rotation; },
-        get objects() {return {1: ship}},
+        get objects() {return {1: ship};},
+        get ship() {return ship;},
         moveForward: moveForward,
         rotateLeft: rotateLeft,
         rotateRight: rotateRight

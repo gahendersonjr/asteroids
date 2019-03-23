@@ -48,7 +48,27 @@ function startGame(){
           // particlesFire.update(elapsedTime);
           // particlesSmoke.update(elapsedTime);
           asteroids.update(elapsedTime);
+          Object.getOwnPropertyNames(asteroids.objects).forEach(function (value) {
+            let asteroidW = asteroids.objects[value].size.x *.65;
+            let asteroidH = asteroids.objects[value].size.y *.65;
+            let asteroidX = asteroids.objects[value].center.x - asteroidH/2;
+            let asteroidY = asteroids.objects[value].center.y - asteroidH/2;
+
+            let shipW = ship.ship.size.x *.65;
+            let shipH = ship.ship.size.y *.65;
+            let shipX = ship.ship.center.x - shipH/2;
+            let shipY = ship.ship.center.y - shipH/2;
+            // console.log(asteroid.center);
+            // console.log(ship.ship.center);
+            if(shipX + shipW >= asteroidX &&
+              shipX <= asteroidX + asteroidW &&
+              shipY + shipH >= asteroidY &&
+              shipY <= asteroidY + asteroidH){
+                paused = true;
+            }
+          });
       }
+
 
       function render() {
           graphics.clear();
@@ -65,14 +85,15 @@ function startGame(){
           if (!paused){
             update(elapsedTime);
             render();
-          } else {
-              context.clearRect(0, 0, canvas.width, canvas.height);
-              context.fillStyle = "greenyellow";
-              context.font = "25px Courier New";
-              context.fillText("game pause", 20, 200);
-              context.fillText("press escape to quit", 40, 250);
-              context.fillText("press space to continue", 40, 300);
           }
+          // else {
+          //     context.clearRect(0, 0, canvas.width, canvas.height);
+          //     context.fillStyle = "greenyellow";
+          //     context.font = "25px Courier New";
+          //     context.fillText("game pause", 20, 200);
+          //     context.fillText("press escape to quit", 40, 250);
+          //     context.fillText("press space to continue", 40, 300);
+          // }
 
           if(!gameOver){
             requestAnimationFrame(gameLoop);
@@ -97,7 +118,7 @@ function startGame(){
       requestAnimationFrame(gameLoop);
 
       window.onkeyup = function(e) {
-         console.log(e.keyCode);
+         // console.log(e.keyCode);
          if(e.keyCode==27){ //escape
            if (paused) {
              gameOver = true;
