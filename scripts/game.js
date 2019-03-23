@@ -61,12 +61,19 @@ function startGame(){
       function gameLoop(time) {
           let elapsedTime = (time - lastTimeStamp);
           processInput(elapsedTime);
+          lastTimeStamp = time;
           if (!paused){
             update(elapsedTime);
+            render();
+          } else {
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              context.fillStyle = "greenyellow";
+              context.font = "25px Courier New";
+              context.fillText("game pause", 20, 200);
+              context.fillText("press escape to quit", 40, 250);
+              context.fillText("press space to continue", 40, 300);
           }
-          lastTimeStamp = time;
 
-          render();
           if(!gameOver){
             requestAnimationFrame(gameLoop);
           } else {
@@ -92,8 +99,18 @@ function startGame(){
       window.onkeyup = function(e) {
          console.log(e.keyCode);
          if(e.keyCode==27){ //escape
-           // paused = !paused;
-           gameOver=true;
+           if (paused) {
+             gameOver = true;
+           } else {
+             paused = true;
+           }
+         }
+         if(e.keyCode==32){ //space
+           if(paused){
+             paused = false;
+           } else {
+             //fire laser
+           }
          }
       }
   }(MyGame.systems, MyGame.input, MyGame.render, MyGame.graphics));
