@@ -67,7 +67,16 @@ function startGame(){
           lastTimeStamp = time;
 
           render();
-          requestAnimationFrame(gameLoop);
+          if(!gameOver){
+            requestAnimationFrame(gameLoop);
+          } else {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById("startGame").classList.remove("inactive");
+            document.getElementById("highScores").classList.remove("inactive");
+            document.getElementById("controls").classList.remove("inactive");
+            document.getElementById("credits").classList.remove("inactive");
+            document.getElementById("score").classList.add("inactive");
+          }
       };
 
       myKeyboard.register('w', ship.moveForward);
@@ -82,8 +91,9 @@ function startGame(){
 
       window.onkeyup = function(e) {
          console.log(e.keyCode);
-         if(e.keyCode==27){
-           paused = !paused;
+         if(e.keyCode==27){ //escape
+           // paused = !paused;
+           gameOver=true;
          }
       }
   }(MyGame.systems, MyGame.input, MyGame.render, MyGame.graphics));
