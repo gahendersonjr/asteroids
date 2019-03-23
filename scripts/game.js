@@ -3,7 +3,6 @@ let context = canvas.getContext("2d");
 let highs = [0,0,0,0,0]
 
 function startGame(){
-  console.log("hi");
   document.getElementById("startGame").classList.add("inactive");
   document.getElementById("highScores").classList.add("inactive");
   document.getElementById("controls").classList.add("inactive");
@@ -11,30 +10,25 @@ function startGame(){
   document.getElementById("score").classList.remove("inactive");
   MyGame.main = (function (systems, input, renderer, graphics) {
       'use strict';
+      let score = 0;
+      let level = 1;
+      let lives = 3;
+      let hyperspace = 0;
       let paused = false;
       let gameOver = false;
+      computeStatusString();
       let lastTimeStamp = performance.now();
 
       let myKeyboard = input.Keyboard();
 
       let asteroids = systems.Asteroids();
       let ship = systems.Ship();
-      // let particlesFire = systems.ParticleSystem({
-      //     center: { x: 300, y: 300 },
-      //     size: { mean: 15, stdev: 5 },
-      //     speed: { mean: 65, stdev: 35 },
-      //     lifetime: { mean: 4, stdev: 1}
-      // });
-      // let particlesSmoke = systems.ParticleSystem({
-      //     center: { x: 300, y: 300 },
-      //     size: { mean: 12, stdev: 3 },
-      //     speed: { mean: 65, stdev: 35 },
-      //     lifetime: { mean: 4, stdev: 1}
-      // });
-      // let fireRenderer = renderer.ParticleSystem(particlesFire, graphics,
-      //     'assets/fire.png');
-      // let smokeRenderer = renderer.ParticleSystem(particlesSmoke, graphics,
-      //     'assets/smoke-2.png');
+      let particlesFire = systems.ParticleSystem();
+      let particlesSmoke = systems.ParticleSystem();
+      let fireRenderer = renderer(particlesFire, graphics,
+          'assets/fire.png');
+      let smokeRenderer = renderer(particlesSmoke, graphics,
+          'assets/smoke-2.png');
       let asteroidRenderer = renderer(asteroids, graphics,
           'assets/asteroid.png');
       let shipRenderer = renderer(ship, graphics,
@@ -47,22 +41,26 @@ function startGame(){
       }
 
       function update(elapsedTime) {
-          // particlesFire.update(elapsedTime);
-          // particlesSmoke.update(elapsedTime);
-          ship.laserUpdate(elapsedTime);
-          asteroids.update(elapsedTime);
-          laserasteroidShipCollisionDetection();
-          asteroidShipCollisionDetection();
+          particlesFire.update(elapsedTime);
+          particlesSmoke.update(elapsedTime);
+          if(!gameOver){
+            ship.laserUpdate(elapsedTime);
+            asteroids.update(elapsedTime);
+            laserAsteroidCollisionDetection();
+            asteroidShipCollisionDetection();
+          }
       }
 
 
       function render() {
           graphics.clear();
-          asteroidRenderer.render();
-          laserRenderer.laserRender();
-          shipRenderer.render();
-          // smokeRenderer.render();
-          // fireRenderer.render();
+          smokeRenderer.render();
+          fireRenderer.render();
+          if(!gameOver){
+            asteroidRenderer.render();
+            laserRenderer.laserRender();
+            shipRenderer.render();
+          }
       }
 
       function gameLoop(time) {
@@ -81,16 +79,16 @@ function startGame(){
               context.fillText("press space to continue", 40, 300);
           }
 
-          if(!gameOver){
+          // if(!gameOver){
             requestAnimationFrame(gameLoop);
-          } else {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            document.getElementById("startGame").classList.remove("inactive");
-            document.getElementById("highScores").classList.remove("inactive");
-            document.getElementById("controls").classList.remove("inactive");
-            document.getElementById("credits").classList.remove("inactive");
-            document.getElementById("score").classList.add("inactive");
-          }
+          // } else {
+          //   context.clearRect(0, 0, canvas.width, canvas.height);
+          //   document.getElementById("startGame").classList.remove("inactive");
+          //   document.getElementById("highScores").classList.remove("inactive");
+          //   document.getElementById("controls").classList.remove("inactive");
+          //   document.getElementById("credits").classList.remove("inactive");
+          //   document.getElementById("score").classList.add("inactive");
+          // }
       }
 
       function asteroidShipCollisionDetection(){
@@ -106,13 +104,17 @@ function startGame(){
 
           if(shipX + shipW >= asteroidX && shipX <= asteroidX + asteroidW &&
             shipY + shipH >= asteroidY && shipY <= asteroidY + asteroidH){
+              for(let i = 0; i < 150; i++){
+                particlesFire.create(ship.ship.center.x, ship.ship.center.y);
+                particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+              }
               gameOver = true;
               return;
           }
         });
       }
 
-      function laserasteroidShipCollisionDetection(){
+      function laserAsteroidCollisionDetection(){
         Object.getOwnPropertyNames(asteroids.objects).forEach(function (asteroid) {
           let asteroidW = asteroids.objects[asteroid].size.x *.65;
           let asteroidH = asteroids.objects[asteroid].size.y *.65;
@@ -126,11 +128,44 @@ function startGame(){
             if(laserX + laserW >= asteroidX && laserX <= asteroidX + asteroidW &&
               laserY + laserH >= asteroidY && laserY <= asteroidY + asteroidH){
                 delete ship.lasers[laser];
+                score++;
+                computeStatusString();
+                for(let i = 0; i < 150; i++){
+                  particlesFire.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
+                  particlesSmoke.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
+                }
                 delete asteroids.objects[asteroid];
                 return;
             }
           });
         });
+      }
+
+      function computeStatusString(){
+        let str = "score: " + score + " | level: " + level + " | lives: " + lives + " | hyperspace: ";
+        if(hyperspace==0){
+          str += "ready";
+        } else {
+          str += "hyperspace";
+        }
+        document.getElementById("score").innerText= str;
+      }
+
+      function findSafeLocation(){
+        let found = false;
+        let x;
+        let y;
+        while(!found){
+          found = true;
+          x = Random.nextRange(100, window.innerWidth-100);
+          y = Random.nextRange(100, window.innerHeight-100);
+          Object.getOwnPropertyNames(asteroids.objects).forEach(function (asteroid) {
+            if(Math.abs(asteroids.objects[asteroid].center.x - x) < 150 && Math.abs(asteroids.objects[asteroid].center.x - x) < 150){
+              found = false;
+            }
+          });
+        }
+        return {x: x, y: y};
       }
 
       myKeyboard.register('w', ship.moveForward);
@@ -144,7 +179,7 @@ function startGame(){
       requestAnimationFrame(gameLoop);
 
       window.onkeyup = function(e) {
-         // console.log(e.keyCode);
+         console.log(e.keyCode);
          if(e.keyCode==27){ //escape
            if (paused) {
              gameOver = true;
@@ -158,6 +193,9 @@ function startGame(){
            } else {
              ship.shoot();
            }
+         }
+         if(e.keyCode==90){ // z
+           ship.ship.center=findSafeLocation();
          }
       }
   }(MyGame.systems, MyGame.input, MyGame.render, MyGame.graphics));
@@ -199,4 +237,8 @@ function controls(){
   context.fillText("thrust: up arrow key", 40, 300);
   context.fillText("fire laser: spacebar", 40, 350);
   context.fillText("hyperspace: z key", 40, 400);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

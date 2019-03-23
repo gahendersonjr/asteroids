@@ -42,7 +42,6 @@ MyGame.systems.Ship = function() {
         elapsedTime = elapsedTime / 1000;
         Object.getOwnPropertyNames(lasers).forEach(value => {
             let object = lasers[value];
-            console.log(object.center);
             object.center.x += (elapsedTime * object.speed * object.direction.x);
             object.center.y += (elapsedTime * object.speed * object.direction.y);
 

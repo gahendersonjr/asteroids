@@ -1,20 +1,20 @@
-MyGame.systems.ParticleSystem = function (spec) {
+MyGame.systems.ParticleSystem = function () {
     let nextName = 1;
     let objects = {};
 
-    function create() {
-        let size = Random.nextGaussian(spec.size.mean, spec.size.stdev);
+    function create(x,y) {
+        let size = Random.nextGaussian(15, 5);
         let p = {
-            center: { x: spec.center.x, y: spec.center.y },
+            center: { x: x, y: y },
             size: { x: size, y: size },
             direction: Random.nextCircleVector(),
-            speed: Random.nextGaussian(spec.speed.mean, spec.speed.stdev), // pixels per second
+            speed: Random.nextGaussian(65,35), // pixels per second
             rotation: 0,
-            lifetime: Random.nextGaussian(spec.lifetime.mean, spec.lifetime.stdev), // seconds
+            lifetime: Random.nextGaussian(.75, .2), // seconds
             alive: 0
         };
 
-        return p;
+        objects[nextName++] = p;
     }
 
     function update(elapsedTime) {
@@ -22,9 +22,9 @@ MyGame.systems.ParticleSystem = function (spec) {
 
         elapsedTime = elapsedTime / 1000;
 
-        for (let object = 0; object < 2; object++) {
-            objects[nextName++] = create();
-        }
+        // for (let object = 0; object < 2; object++) {
+        //     objects[nextName++] = create();
+        // }
 
         Object.getOwnPropertyNames(objects).forEach(value => {
             let object = objects[value];
@@ -47,6 +47,7 @@ MyGame.systems.ParticleSystem = function (spec) {
 
     let api = {
         update: update,
+        create: create,
         get objects() { return objects; }
     };
 
