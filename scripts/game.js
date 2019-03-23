@@ -201,10 +201,11 @@ function startGame(){
       window.onkeyup = function(e) {
          console.log(e.keyCode);
          if(e.keyCode==27){ //escape
-           if (paused) {
-             gameOver = true;
-           } else if (gameOver){
+           if (gameOver){
                context.clearRect(0, 0, canvas.width, canvas.height);
+           } else if (paused){
+             paused = false;
+             gameOver=true;
            }else {
              paused = true;
            }
