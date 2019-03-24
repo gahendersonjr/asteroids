@@ -2,11 +2,14 @@ MyGame.systems.Asteroids = function () {
     let nextName = 1;
     let objects = {};
 
-    function create() {
+    function create(starting, forceSmall) {
         let sizes = [40,60,80]
         let size = sizes[Random.nextRange(0,3)];
+        if(forceSmall){
+          size = 40;
+        }
         let object = {
-            center: getStartingLocation(),
+            center: starting,
             size: { x: size, y: size },
             direction: Random.nextCircleVector(),
             speed: Random.nextGaussian(200, 40), // pixels per second
@@ -16,13 +19,21 @@ MyGame.systems.Asteroids = function () {
         return object;
     }
 
+    function split(num, center){
+
+      for(let i = 0; i < num; i++){
+        console.log(nextName++);
+        objects[nextName++] = create({x: center.x, y: center.y}, true);
+      }
+    }
+
     function update(elapsedTime) {
         let removeMe = [];
 
         elapsedTime = elapsedTime / 1000;
 
-        if (Random.nextRange(0,10)==0){
-            objects[nextName++] = create();
+        if (Random.nextRange(0,15)==0){
+            objects[nextName++] = create(getStartingLocation(), false);
         }
 
         Object.getOwnPropertyNames(objects).forEach(value => {
@@ -61,6 +72,7 @@ MyGame.systems.Asteroids = function () {
 
     let api = {
         update: update,
+        split: split,
         get objects() { return objects; }
     };
 

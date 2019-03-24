@@ -148,11 +148,23 @@ function startGame(){
                 let explosion = new Audio('../assets/explosion.wav');
                 explosion.play();
                 delete ship.lasers[laser];
-                score++;
+                if(asteroids.objects[asteroid].size.x==80){
+                  score++;
+                } else if(asteroids.objects[asteroid].size.x==60){
+                  score += 2;
+                } else if(asteroids.objects[asteroid].size.x==40){
+                  score += 3;
+                }
+
                 computeStatusString();
                 for(let i = 0; i < 150; i++){
                   particlesFire.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
                   particlesSmoke.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
+                }
+                if(asteroids.objects[asteroid].size.x>=60){
+                    console.log(asteroids.objects[asteroid].center);
+                    let num = asteroids.objects[asteroid].size.x==60 ? 2 : 4;
+                    asteroids.split(num, asteroids.objects[asteroid].center);
                 }
                 delete asteroids.objects[asteroid];
                 return;
