@@ -18,12 +18,11 @@ function startGame(){
       let level = 1;
       let lives = 3;
       let hyperspace = 0;
+
       let paused = false;
       let gameOver = false;
       let gameOverScreen = false;
-      computeStatusString();
       let lastTimeStamp = performance.now();
-
       let myKeyboard = input.Keyboard();
 
       let ufos = systems.UFOs();
@@ -51,6 +50,7 @@ function startGame(){
       }
 
       function update(elapsedTime) {
+          computeStatusString();
           particlesFire.update(elapsedTime);
           particlesSmoke.update(elapsedTime);
           if(!gameOver){
@@ -63,6 +63,11 @@ function startGame(){
             ufoLaserShipCollisionDetection();
             ufoShipCollisionDetection();
             laserUfoCollisionDetection();
+            if(hyperspace<=0){
+              hyperspace=0;
+            }else{
+              hyperspace -=elapsedTime;
+            }
           }
       }
 
@@ -143,7 +148,6 @@ function startGame(){
                   particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
                 }
                 lives--;
-                computeStatusString();
                 ship.ship.center=findSafeLocation();
               }
               return;
@@ -173,7 +177,6 @@ function startGame(){
                   particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
                 }
                 lives--;
-                computeStatusString();
                 ship.ship.center=findSafeLocation();
               }
               return;
@@ -204,8 +207,6 @@ function startGame(){
                 } else if(asteroids.objects[asteroid].size.x==40){
                   score += 3;
                 }
-
-                computeStatusString();
                 for(let i = 0; i < 150; i++){
                   particlesFire.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
                   particlesSmoke.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
@@ -238,8 +239,6 @@ function startGame(){
                 explosion.play();
                 delete ship.lasers[laser];
                 score += 5;
-
-                computeStatusString();
                 for(let i = 0; i < 150; i++){
                   particlesFire.create(ufos.objects[ufo].center.x, ufos.objects[ufo].center.y);
                   particlesSmoke.create(ufos.objects[ufo].center.x, ufos.objects[ufo].center.y);
@@ -273,23 +272,20 @@ function startGame(){
                   particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
                 }
                 lives--;
-                computeStatusString();
                 ship.ship.center=findSafeLocation();
               }
               delete ufos.lasers[laser];
               return;
         }
       });
-}
-
-
+    }
 
       function computeStatusString(){
         let str = "score: " + score + " | level: " + level + " | lives: " + lives + " | hyperspace: ";
         if(hyperspace==0){
           str += "ready";
         } else {
-          str += "hyperspace";
+          str +=parseInt(hyperspace/1000);
         }
         document.getElementById("score").innerText= str;
       }
@@ -344,7 +340,11 @@ function startGame(){
            }
          }
          if(e.keyCode==90){ // z
-           ship.ship.center=findSafeLocation();
+           if(hyperspace==0){
+             ship.ship.center=findSafeLocation();
+             hyperspace = 9000;
+           }
+
          }
       }
   }(MyGame.systems, MyGame.input, MyGame.render, MyGame.graphics));
