@@ -95,7 +95,6 @@ function startGame(){
                 highs[i] = parseInt(highs[i]);
               }
               highs.sort(sortNumber);
-              console.log(highs);
               localStorage.setItem("asteroids.highs", highs);
               document.getElementById("startGame").classList.remove("inactive");
               document.getElementById("highScores").classList.remove("inactive");
@@ -301,10 +300,13 @@ function startGame(){
           y = Random.nextRange(100, window.innerHeight-100);
           Object.getOwnPropertyNames(asteroids.objects).forEach(function (asteroid) {
             Object.getOwnPropertyNames(ufos.objects).forEach(function (ufo) {
-              if(Math.abs(asteroids.objects[asteroid].center.x - x) < 120 && Math.abs(asteroids.objects[asteroid].center.x - x) < 120 &&
-                Math.abs(ufos.objects[ufo].center.x - x) < 120 && Math.abs(ufos.objects[ufo].center.x - x) < 120){
-                found = false;
-              }
+              Object.getOwnPropertyNames(ufos.lasers).forEach(function (laser) {
+                if(Math.abs(asteroids.objects[asteroid].center.x - x) < 150 && Math.abs(asteroids.objects[asteroid].center.x - x) < 150 &&
+                  Math.abs(ufos.objects[ufo].center.x - x) < 150 && Math.abs(ufos.objects[ufo].center.x - x) < 150 &&
+                  Math.abs(ufos.lasers[laser].center.x - x) < 250 && Math.abs(ufos.lasers[laser].center.x - x) < 250){
+                  found = false;
+                }
+              });
             });
           });
         }

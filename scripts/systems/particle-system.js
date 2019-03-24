@@ -2,12 +2,12 @@ MyGame.systems.ParticleSystem = function () {
     let nextName = 1;
     let objects = {};
 
-    function create(x,y) {
+    function create(x,y, direction=Random.nextCircleVector()) {
         let size = Random.nextGaussian(15, 5);
         let p = {
             center: { x: x, y: y },
             size: { x: size, y: size },
-            direction: Random.nextCircleVector(),
+            direction: direction,
             speed: Random.nextGaussian(65,35), // pixels per second
             rotation: 0,
             lifetime: Random.nextGaussian(.75, .2), // seconds
@@ -21,11 +21,6 @@ MyGame.systems.ParticleSystem = function () {
         let removeMe = [];
 
         elapsedTime = elapsedTime / 1000;
-
-        // for (let object = 0; object < 2; object++) {
-        //     objects[nextName++] = create();
-        // }
-
         Object.getOwnPropertyNames(objects).forEach(value => {
             let object = objects[value];
 
