@@ -1,6 +1,9 @@
 let canvas = document.getElementById("id-canvas");
 let context = canvas.getContext("2d");
 let highs = [0,0,0,0,0];
+if(localStorage.getItem("asteroids.highs")){
+  highs = localStorage.getItem("asteroids.highs").split(',');
+}
 
 function startGame(){
   document.getElementById("startGame").classList.add("inactive");
@@ -75,15 +78,20 @@ function startGame(){
             ufoLaserRenderer.laserRender();
             shipRenderer.render();
           } else {
-              highs = highs.sort();
               context.fillStyle = "greenyellow";
               context.font = "25px Courier New";
               context.fillText("game over", 20, 200);
               context.fillText("you scored " + score, 40, 250);
-              if (score >= highs[0]){
+              if (score >= highs[4]){
                 context.fillText("you got a high score!", 40, 300);
-                highs[0]=score;
+                highs[4]=score;
               }
+              for(let i in highs){
+                highs[i] = parseInt(highs[i]);
+              }
+              highs.sort(sortNumber);
+              console.log(highs);
+              localStorage.setItem("asteroids.highs", highs);
               document.getElementById("startGame").classList.remove("inactive");
               document.getElementById("highScores").classList.remove("inactive");
               document.getElementById("controls").classList.remove("inactive");
@@ -153,9 +161,6 @@ function startGame(){
           let ufoH = ufos.objects[ufo].size.y *.65;
           let ufoX = ufos.objects[ufo].center.x - ufoW/2;
           let ufoY = ufos.objects[ufo].center.y - ufoH/2;
-
-          console.log(ufoW);
-
           if(shipX + shipW >= ufoX && shipX <= ufoX + ufoW &&
             shipY + shipH >= ufoY && shipY <= ufoY + ufoH){
               let explosion = new Audio('../assets/explosion.wav');
@@ -298,9 +303,12 @@ function startGame(){
           x = Random.nextRange(100, window.innerWidth-100);
           y = Random.nextRange(100, window.innerHeight-100);
           Object.getOwnPropertyNames(asteroids.objects).forEach(function (asteroid) {
-            if(Math.abs(asteroids.objects[asteroid].center.x - x) < 120 && Math.abs(asteroids.objects[asteroid].center.x - x) < 120){
-              found = false;
-            }
+            Object.getOwnPropertyNames(ufos.objects).forEach(function (ufo) {
+              if(Math.abs(asteroids.objects[asteroid].center.x - x) < 120 && Math.abs(asteroids.objects[asteroid].center.x - x) < 120 &&
+                Math.abs(ufos.objects[ufo].center.x - x) < 120 && Math.abs(ufos.objects[ufo].center.x - x) < 120){
+                found = false;
+              }
+            });
           });
         }
         return {x: x, y: y};
@@ -349,16 +357,16 @@ function resize(){
 }
 
 function highScores(){
-  highs = highs.sort();
+  highs = highs.sort(sortNumber);
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = "greenyellow";
   context.font = "25px Courier New";
   context.fillText("high scores:", 20, 200);
-  context.fillText("1. " + highs[4], 40, 250);
-  context.fillText("2. " + highs[3], 40, 300);
+  context.fillText("1. " + highs[0], 40, 250);
+  context.fillText("2. " + highs[1], 40, 300);
   context.fillText("3. " + highs[2], 40, 350);
-  context.fillText("4. " + highs[1], 40, 400);
-  context.fillText("5. " + highs[0], 40, 450);
+  context.fillText("4. " + highs[3], 40, 400);
+  context.fillText("5. " + highs[4], 40, 450);
 }
 
 function credits(){
@@ -384,3 +392,7 @@ function controls(){
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function sortNumber(a,b) {
+        return b - a;
+    }
