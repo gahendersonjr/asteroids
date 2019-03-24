@@ -207,6 +207,7 @@ function startGame(){
                 } else if(asteroids.objects[asteroid].size.x==40){
                   score += 3;
                 }
+                level = parseInt(score/50) + 1;
                 for(let i = 0; i < 150; i++){
                   particlesFire.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
                   particlesSmoke.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
