@@ -40,6 +40,8 @@ function startGame(){
           'assets/ship.png');
       let laserRenderer = renderer(ship, graphics,
           'assets/laser.png');
+      let ufoLaserRenderer = renderer(ufos, graphics,
+          'assets/ufobullet.png');
 
       function processInput(elapsedTime) {
           myKeyboard.update(elapsedTime);
@@ -49,11 +51,15 @@ function startGame(){
           particlesFire.update(elapsedTime);
           particlesSmoke.update(elapsedTime);
           if(!gameOver){
+            ufos.laserUpdate(elapsedTime);
             ship.laserUpdate(elapsedTime);
             asteroids.update(elapsedTime);
             ufos.update(elapsedTime);
             laserAsteroidCollisionDetection();
             asteroidShipCollisionDetection();
+            ufoLaserShipCollisionDetection();
+            ufoShipCollisionDetection();
+            laserUfoCollisionDetection();
           }
       }
 
@@ -66,6 +72,7 @@ function startGame(){
             ufoRenderer.render();
             asteroidRenderer.render();
             laserRenderer.laserRender();
+            ufoLaserRenderer.laserRender();
             shipRenderer.render();
           } else {
               highs = highs.sort();
@@ -131,7 +138,39 @@ function startGame(){
                 computeStatusString();
                 ship.ship.center=findSafeLocation();
               }
+              return;
+          }
+        });
+      }
 
+      function ufoShipCollisionDetection(){
+        let shipW = ship.ship.size.x *.65;
+        let shipH = ship.ship.size.y *.65;
+        let shipX = ship.ship.center.x - shipW/2;
+        let shipY = ship.ship.center.y - shipH/2;
+        Object.getOwnPropertyNames(ufos.objects).forEach(function (ufo) {
+          let ufoW = ufos.objects[ufo].size.x *.65;
+          let ufoH = ufos.objects[ufo].size.y *.65;
+          let ufoX = ufos.objects[ufo].center.x - ufoW/2;
+          let ufoY = ufos.objects[ufo].center.y - ufoH/2;
+
+          console.log(ufoW);
+
+          if(shipX + shipW >= ufoX && shipX <= ufoX + ufoW &&
+            shipY + shipH >= ufoY && shipY <= ufoY + ufoH){
+              let explosion = new Audio('../assets/explosion.wav');
+              explosion.play();
+              if(lives==1){
+                gameOver = true;
+              }else{
+                for(let i = 0; i < 150; i++){
+                  particlesFire.create(ship.ship.center.x, ship.ship.center.y);
+                  particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+                }
+                lives--;
+                computeStatusString();
+                ship.ship.center=findSafeLocation();
+              }
               return;
           }
         });
@@ -167,7 +206,6 @@ function startGame(){
                   particlesSmoke.create(asteroids.objects[asteroid].center.x, asteroids.objects[asteroid].center.y);
                 }
                 if(asteroids.objects[asteroid].size.x>=60){
-                    console.log(asteroids.objects[asteroid].center);
                     let num = asteroids.objects[asteroid].size.x==60 ? 2 : 4;
                     asteroids.split(num, asteroids.objects[asteroid].center);
                 }
@@ -177,6 +215,69 @@ function startGame(){
           });
         });
       }
+
+      function laserUfoCollisionDetection(){
+        Object.getOwnPropertyNames(ufos.objects).forEach(function (ufo) {
+          let ufoW = ufos.objects[ufo].size.x *.65;
+          let ufoH = ufos.objects[ufo].size.y *.65;
+          let ufoX = ufos.objects[ufo].center.x - ufoW/2;
+          let ufoY = ufos.objects[ufo].center.y - ufoH/2;
+          Object.getOwnPropertyNames(ship.lasers).forEach(function (laser) {
+            let laserW = ship.lasers[laser].size.x;
+            let laserH = ship.lasers[laser].size.y;
+            let laserX = ship.lasers[laser].center.x - laserW/2;
+            let laserY = ship.lasers[laser].center.y - laserH/2;
+            if(laserX + laserW >= ufoX && laserX <= ufoX + ufoW &&
+              laserY + laserH >= ufoY && laserY <= ufoY + ufoH){
+                let explosion = new Audio('../assets/explosion.wav');
+                explosion.play();
+                delete ship.lasers[laser];
+                score += 5;
+
+                computeStatusString();
+                for(let i = 0; i < 150; i++){
+                  particlesFire.create(ufos.objects[ufo].center.x, ufos.objects[ufo].center.y);
+                  particlesSmoke.create(ufos.objects[ufo].center.x, ufos.objects[ufo].center.y);
+                }
+                delete ufos.objects[ufo];
+                return;
+            }
+          });
+        });
+      }
+
+      function ufoLaserShipCollisionDetection(){
+        let shipW = ship.ship.size.x * .65;
+        let shipH = ship.ship.size.y * .65;
+        let shipX = ship.ship.center.x - shipW/2;
+        let shipY = ship.ship.center.y - shipH/2;
+        Object.getOwnPropertyNames(ufos.lasers).forEach(function (laser) {
+          let laserW = ufos.lasers[laser].size.x;
+          let laserH = ufos.lasers[laser].size.y;
+          let laserX = ufos.lasers[laser].center.x - laserW/2;
+          let laserY = ufos.lasers[laser].center.y - laserH/2;
+          if(laserX + laserW >= shipX && laserX <= shipX + shipW &&
+            laserY + laserH >= shipY && laserY <= shipY + shipH){
+              let explosion = new Audio('../assets/explosion.wav');
+              explosion.play();
+              if(lives==1){
+                gameOver = true;
+              }else{
+                for(let i = 0; i < 150; i++){
+                  particlesFire.create(ship.ship.center.x, ship.ship.center.y);
+                  particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+                }
+                lives--;
+                computeStatusString();
+                ship.ship.center=findSafeLocation();
+              }
+              delete ufos.lasers[laser];
+              return;
+        }
+      });
+}
+
+
 
       function computeStatusString(){
         let str = "score: " + score + " | level: " + level + " | lives: " + lives + " | hyperspace: ";
@@ -216,7 +317,6 @@ function startGame(){
       requestAnimationFrame(gameLoop);
 
       window.onkeyup = function(e) {
-         console.log(e.keyCode);
          if(e.keyCode==27){ //escape
            if (gameOver){
                context.clearRect(0, 0, canvas.width, canvas.height);

@@ -22,7 +22,6 @@ MyGame.systems.Asteroids = function () {
     function split(num, center){
 
       for(let i = 0; i < num; i++){
-        console.log(nextName++);
         objects[nextName++] = create({x: center.x, y: center.y}, true);
       }
     }

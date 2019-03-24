@@ -31,7 +31,8 @@ MyGame.systems.Ship = function() {
           size: { x: 25, y: 10 },
           direction: { x: Math.cos(ship.rotation), y: Math.sin(ship.rotation)},
           speed: 700, // pixels per second
-          rotation: ship.rotation
+          rotation: ship.rotation,
+          count: true
       };
       lasers[laserIndex++] = laser;
     }

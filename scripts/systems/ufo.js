@@ -1,6 +1,8 @@
 MyGame.systems.UFOs = function () {
     let nextName = 1;
     let objects = {};
+    let lasers = {};
+    let laserIndex = 1;
 
     function create(size) {
         let object = {
@@ -18,14 +20,16 @@ MyGame.systems.UFOs = function () {
         let removeMe = [];
 
         elapsedTime = elapsedTime / 1000;
-
-        if (Random.nextRange(0,100)==0 && Object.keys(objects).length < 2){
+        if (Random.nextRange(0,100)==0 && Object.keys(objects).length < 1){
             let size = Random.nextRange(0,2)==1 ? 80 : 160;
             objects[nextName++] = create(size);
         }
 
         Object.getOwnPropertyNames(objects).forEach(value => {
             let object = objects[value];
+            if(Random.nextRange(0,30)==0){
+              shoot(object.center.x, object.center.y);
+            }
 
             object.center.x += (elapsedTime * object.speed * object.direction.x);
             object.center.y += (elapsedTime * object.speed * object.direction.y);
@@ -37,6 +41,37 @@ MyGame.systems.UFOs = function () {
         for (let object = 0; object < removeMe.length; object++) {
             delete objects[removeMe[object]];
         }
+    }
+
+    function laserUpdate(elapsedTime) {
+        let removeMe = [];
+
+        elapsedTime = elapsedTime / 1000;
+        Object.getOwnPropertyNames(lasers).forEach(value => {
+            let object = lasers[value];
+            object.center.x += (elapsedTime * object.speed * object.direction.x);
+            object.center.y += (elapsedTime * object.speed * object.direction.y);
+
+            if (object.center.x < 0 || object.center.x > window.innerWidth || object.center.y < 0 || object.center.y >  window.innerHeight) {
+                removeMe.push(value);
+            }
+        });
+
+        for (let object = 0; object < removeMe.length; object++) {
+            delete lasers[removeMe[object]];
+        }
+    }
+
+    function shoot(x,y){
+      let laser = {
+          center: {x: x, y: y},
+          size: { x: 30, y: 30 },
+          direction: Random.nextCircleVector(),
+          speed: 400, // pixels per second
+          rotation: 0,
+          count: false
+      };
+      lasers[laserIndex++] = laser;
     }
 
     function getStartingLocation(){
@@ -58,7 +93,9 @@ MyGame.systems.UFOs = function () {
 
     let api = {
         update: update,
-        get objects() { return objects; }
+        get objects() { return objects; },
+        get lasers() {return lasers;},
+        laserUpdate: laserUpdate
     };
 
     return api;
