@@ -23,6 +23,7 @@ function startGame(){
 
       let myKeyboard = input.Keyboard();
 
+      let ufos = systems.UFOs();
       let asteroids = systems.Asteroids();
       let ship = systems.Ship();
       let particlesFire = systems.ParticleSystem();
@@ -33,6 +34,8 @@ function startGame(){
           'assets/smoke-2.png');
       let asteroidRenderer = renderer(asteroids, graphics,
           'assets/asteroid.png');
+      let ufoRenderer = renderer(ufos, graphics,
+          'assets/ufo.png');
       let shipRenderer = renderer(ship, graphics,
           'assets/ship.png');
       let laserRenderer = renderer(ship, graphics,
@@ -48,6 +51,7 @@ function startGame(){
           if(!gameOver){
             ship.laserUpdate(elapsedTime);
             asteroids.update(elapsedTime);
+            ufos.update(elapsedTime);
             laserAsteroidCollisionDetection();
             asteroidShipCollisionDetection();
           }
@@ -59,6 +63,7 @@ function startGame(){
           if(!gameOver){
             smokeRenderer.render();
             fireRenderer.render();
+            ufoRenderer.render();
             asteroidRenderer.render();
             laserRenderer.laserRender();
             shipRenderer.render();
