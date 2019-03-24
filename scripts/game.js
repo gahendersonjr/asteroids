@@ -56,6 +56,11 @@ function startGame(){
           if(!gameOver){
             ufos.laserUpdate(elapsedTime);
             ship.laserUpdate(elapsedTime);
+            let particles = ship.particles();
+            if(particles){
+              console.log(particles);
+              particlesFire.create(particles[0], particles[1]);
+            }
             asteroids.update(elapsedTime);
             ufos.update(elapsedTime);
             laserAsteroidCollisionDetection();

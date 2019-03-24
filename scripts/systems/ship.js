@@ -1,6 +1,7 @@
 MyGame.systems.Ship = function() {
     let lasers = {};
     let laserIndex = 1;
+    let particles = null;
     let ship = {
         size: { x: 100, y: 100 },       // Size in pixels
         center: { x: window.innerWidth/2, y: window.innerHeight/2 },
@@ -15,6 +16,7 @@ MyGame.systems.Ship = function() {
             // With the normalized direction vector, move the center of the sprite
             ship.center.x += (vectorX * ship.moveRate * elapsedTime);
             ship.center.y += (vectorY * ship.moveRate * elapsedTime);
+            particles = [ship.center.x, ship.center.y];
     }
 
     function rotateLeft(elapsedTime) {
@@ -23,6 +25,12 @@ MyGame.systems.Ship = function() {
 
     function rotateRight(elapsedTime) {
         ship.rotation += ship.rotateRate * (elapsedTime);
+    }
+
+    function sendParticles(){
+      let temp = particles;
+      particles = null;
+      return temp;
     }
 
     function shoot(){
@@ -63,6 +71,7 @@ MyGame.systems.Ship = function() {
         get objects() {return {1: ship};},
         get ship() {return ship;},
         get lasers() {return lasers;},
+        particles: sendParticles,
         moveForward: moveForward,
         rotateLeft: rotateLeft,
         rotateRight: rotateRight,
