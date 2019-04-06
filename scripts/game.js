@@ -73,6 +73,8 @@ function startGame(){
           for(let i=1; i<surface.length; i++){
            context.lineTo(surface[i].x, surface[i].y);
           }
+          context.strokeStyle = "red";
+          context.stroke();
           context.fillStyle = "grey";
           context.fill();
           context.closePath();
