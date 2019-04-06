@@ -18,9 +18,11 @@ MyGame.systems.Ship = function() {
               ship.fuel=0
               return;
             }
+
             // Create a normalized direction vector
             let vectorX = Math.cos(ship.rotation-90);
             let vectorY = Math.sin(ship.rotation-90);
+            console.log(vectorX);
             // With the normalized direction vector, move the center of the sprite
             ship.center.x += (vectorX * ship.thrustRate * elapsedTime);
             ship.center.y += (vectorY * ship.thrustRate * elapsedTime);
@@ -30,7 +32,7 @@ MyGame.systems.Ship = function() {
             if(ship.downwardSpeed<0){
               ship.downwardSpeed = 0;
             }
-            particles = [ship.center.x, ship.center.y];
+            particles = [ship.center.x, ship.center.y, {x: Math.cos(ship.rotation-180), y: Math.sin(ship.rotation-180)} ];
             ship.fuel -= elapsedTime/3;
     }
 

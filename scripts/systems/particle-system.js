@@ -19,6 +19,7 @@ MyGame.systems.ParticleSystem = function () {
 
     function update(elapsedTime) {
         let removeMe = [];
+        // console.log(Random.nextCircleVector());
 
         elapsedTime = elapsedTime / 1000;
         Object.getOwnPropertyNames(objects).forEach(value => {

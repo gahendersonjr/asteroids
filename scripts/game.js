@@ -58,7 +58,7 @@ function startGame(){
           checkCollision();
           let particles = ship.particles();
           if(particles){
-            particlesFire.create(particles[0], particles[1]);
+            particlesFire.create(particles[0], particles[1], particles[2]);
           }
       }
 
@@ -165,7 +165,6 @@ function startGame(){
         let b = -2 * (v1.x * v2.x + v1.y * v2.y);
         let c =  2 * (v1.x * v1.x + v1.y * v1.y);
         let d = Math.sqrt(b * b - 2 * c * (v2.x * v2.x + v2.y * v2.y - ship.ship.radius * ship.ship.radius));
-        // console.log(d);
         if (isNaN(d)) { // no intercept;
             return false;
         }
