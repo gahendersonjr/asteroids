@@ -139,8 +139,10 @@ function startGame(){
             if(lineCircleIntersection(surface[i], surface[i+1]) && !gameOverScreen){
               if(!surface[i].safe || !surface[i+1].safe || (degrees > 5 && degrees <355) || speed>2){
                 gameOverScreen = true;
-                particlesFire.create(ship.ship.center.x, ship.ship.center.y);
-                particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+                for(let i=0; i<500; i++){
+                  particlesFire.create(ship.ship.center.x, ship.ship.center.y);
+                  particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+                }
                 score = -1;
               }
               gameOverScreen = true;
