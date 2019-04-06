@@ -25,9 +25,6 @@ function startGame(){
       let speed = 0;
       let degrees = 0;
       let safeAngle=false;
-
-      let paused = false;
-      let gameOver = false;
       let gameOverScreen = false;
       let lastTimeStamp = performance.now();
       let myKeyboard = input.Keyboard();
@@ -49,28 +46,37 @@ function startGame(){
       function update(elapsedTime) {
           particlesFire.update(elapsedTime);
           particlesSmoke.update(elapsedTime);
-          ship.update(elapsedTime);
+          if(!gameOverScreen || score==-1){
+            ship.update(elapsedTime);
+          }
           speed = parseInt(ship.ship.downwardSpeed*20);
-          score = parseInt(ship.ship.fuel);
+          if(!gameOverScreen){
+            score = parseInt(ship.ship.fuel);
+          }
           computDegrees();
           computeStatusString();
           checkCollision();
-          if(!gameOver){
-            let particles = ship.particles();
-            if(particles){
-              particlesFire.create(particles[0], particles[1]);
-            }
+          let particles = ship.particles();
+          if(particles){
+            particlesFire.create(particles[0], particles[1]);
           }
       }
 
 
       function render() {
           graphics.clear();
-          if(!gameOver){
-            smokeRenderer.render();
-            fireRenderer.render();
-            shipRenderer.render();
-          } else {
+          smokeRenderer.render();
+          fireRenderer.render();
+          shipRenderer.render();
+          context.beginPath();
+          context.moveTo(surface[0].x, surface[0].y);
+          for(let i=1; i<surface.length; i++){
+           context.lineTo(surface[i].x, surface[i].y);
+          }
+          context.fillStyle = "grey";
+          context.fill();
+          context.closePath();
+          if(gameOverScreen) {
               context.fillStyle = "white";
               context.font = "25px Courier New";
               if (score==-1){
@@ -78,30 +84,13 @@ function startGame(){
               } else {
                 context.fillText("safe landing!", 20, 200);
                 context.fillText("you scored " + score, 40, 250);
-                if (score >= highs[4]){
-                  context.fillText("you got a high score!", 40, 300);
-                  highs[4]=score;
-                }
               }
               for(let i in highs){
                 highs[i] = parseInt(highs[i]);
               }
               highs.sort(sortNumber);
               localStorage.setItem("asteroids.highs", highs);
-              document.getElementById("startGame").classList.remove("inactive");
-              document.getElementById("highScores").classList.remove("inactive");
-              document.getElementById("credits").classList.remove("inactive");
-              document.getElementById("score").classList.add("inactive");
           }
-
-          context.beginPath();
-          context.moveTo(surface[0].x, surface[0].y);
-         for(let i=1; i<surface.length; i++){
-           context.lineTo(surface[i].x, surface[i].y);
-         }
-         context.fillStyle = "grey";
-         context.fill();
-         context.closePath();
 
       }
 
@@ -109,21 +98,9 @@ function startGame(){
           let elapsedTime = (time - lastTimeStamp);
           processInput(elapsedTime);
           lastTimeStamp = time;
-          if (!paused){
-            update(elapsedTime);
-            render();
-          } else {
-              context.clearRect(0, 0, canvas.width, canvas.height);
-              context.fillStyle = "white";
-              context.font = "25px Courier New";
-              context.fillText("game pause", 20, 200);
-              context.fillText("press escape to quit", 40, 250);
-              context.fillText("press space to continue", 40, 300);
-          }
-          console.log(particlesFire.objects);
-          if (!gameOver){
-            requestAnimationFrame(gameLoop);
-          }
+          update(elapsedTime);
+          render();
+          requestAnimationFrame(gameLoop);
       }
 
       function computDegrees(){
@@ -140,9 +117,11 @@ function startGame(){
         }
       }
       function computeStatusString(){
-        document.getElementById("fuel").innerText=  "fuel: " + score;
-        document.getElementById("speed").innerText= "speed: " + speed;
-        document.getElementById("angle").innerText= "angle: " + parseInt(degrees);
+        if(!gameOverScreen){
+          document.getElementById("fuel").innerText=  "fuel: " + score;
+          document.getElementById("speed").innerText= "speed: " + speed;
+          document.getElementById("angle").innerText= "angle: " + parseInt(degrees);
+        }
       }
 
       myKeyboard.register('w', ship.thrust);
@@ -155,32 +134,24 @@ function startGame(){
 
       requestAnimationFrame(gameLoop);
 
-      window.onkeyup = function(e) {
-         if(e.keyCode==27){ //escape
-           if (gameOver){
-               context.clearRect(0, 0, canvas.width, canvas.height);
-           } else if (paused){
-             paused = false;
-             gameOver=true;
-           }else {
-             paused = true;
-           }
-         }
-         if(e.keyCode==32){ //space
-           paused = !paused;
-         }
-      }
-
       function checkCollision(){
           for(let i=0; i<surface.length-1; i++){
-            if(lineCircleIntersection(surface[i], surface[i+1])){
-              gameOver = true;
-              console.log(speed);
+            if(lineCircleIntersection(surface[i], surface[i+1]) && !gameOverScreen){
               if(!surface[i].safe || !surface[i+1].safe || (degrees > 5 && degrees <355) || speed>2){
+                gameOverScreen = true;
                 particlesFire.create(ship.ship.center.x, ship.ship.center.y);
                 particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
                 score = -1;
               }
+              gameOverScreen = true;
+              if (score >= highs[4]){
+                highs[4]=score;
+              }
+              for(let i in highs){
+                highs[i] = parseInt(highs[i]);
+              }
+              highs.sort(sortNumber);
+              localStorage.setItem("asteroids.highs", highs);
             }
           }
       }
