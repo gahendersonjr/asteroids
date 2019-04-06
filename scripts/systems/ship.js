@@ -24,9 +24,12 @@ MyGame.systems.Ship = function() {
             let vectorY = Math.sin(ship.rotation-90);
             console.log(vectorX);
             // With the normalized direction vector, move the center of the sprite
+            old_y = ship.center.y;
             ship.center.x += (vectorX * ship.thrustRate * elapsedTime);
             ship.center.y += (vectorY * ship.thrustRate * elapsedTime);
-            ship.downwardSpeed -= ship.thrustRate;
+            if(old_y>ship.center.y){
+              ship.downwardSpeed -= ship.thrustRate;
+            }
             ship.downwardSpeed += GRAVITY;
             ship.center.y += (elapsedTime * ship.downwardSpeed * 1);
             if(ship.downwardSpeed<0){
