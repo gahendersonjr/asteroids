@@ -1,15 +1,15 @@
 MyGame.systems.Ship = function() {
-    let lasers = {};
-    let laserIndex = 1;
+    const WORLD_UNIT = 800;
+    const GRAVITY = 0.00000025 * WORLD_UNIT ;
     let particles = null;
     let ship = {
-        size: { x: 100, y: 100 },       // Size in pixels
-        center: { x: window.innerWidth/2, y: window.innerHeight/2 },
+        size: { x: WORLD_UNIT * 0.05, y: WORLD_UNIT * 0.05 },       // Size in pixels
+        center: { x: WORLD_UNIT * (1 - 0.25), y: WORLD_UNIT * (1- 0.90) },
         rotation: 0,
-        moveRate: 125 / 1000,         // Pixels per second
-        rotateRate: Math.PI / 1000    // Radians per second
+        moveRate: 0,         // Pixels per second
+        rotateRate: 0.0015   // Radians per second
     }
-    function moveForward(elapsedTime) {
+    function thrust(elapsedTime) {
             // Create a normalized direction vector
             let vectorX = Math.cos(ship.rotation);
             let vectorY = Math.sin(ship.rotation);
@@ -17,6 +17,12 @@ MyGame.systems.Ship = function() {
             ship.center.x += (vectorX * ship.moveRate * elapsedTime);
             ship.center.y += (vectorY * ship.moveRate * elapsedTime);
             particles = [ship.center.x, ship.center.y];
+    }
+
+    function update(elapsedTime){
+      ship.moveRate += GRAVITY;
+      console.log(ship.moveRate);
+      ship.center.y += (elapsedTime * ship.moveRate * 1);
     }
 
     function rotateLeft(elapsedTime) {
@@ -33,50 +39,18 @@ MyGame.systems.Ship = function() {
       return temp;
     }
 
-    function shoot(){
-      let laser = {
-          center: {x: ship.center.x, y: ship.center.y},
-          size: { x: 25, y: 10 },
-          direction: { x: Math.cos(ship.rotation), y: Math.sin(ship.rotation)},
-          speed: 700, // pixels per second
-          rotation: ship.rotation,
-          count: true
-      };
-      lasers[laserIndex++] = laser;
-    }
-
-    function laserUpdate(elapsedTime) {
-        let removeMe = [];
-
-        elapsedTime = elapsedTime / 1000;
-        Object.getOwnPropertyNames(lasers).forEach(value => {
-            let object = lasers[value];
-            object.center.x += (elapsedTime * object.speed * object.direction.x);
-            object.center.y += (elapsedTime * object.speed * object.direction.y);
-
-            if (object.center.x < 0 || object.center.x > window.innerWidth || object.center.y < 0 || object.center.y >  window.innerHeight) {
-                removeMe.push(value);
-            }
-        });
-
-        for (let object = 0; object < removeMe.length; object++) {
-            delete lasers[removeMe[object]];
-        }
-    }
 
     let api = {
+        update: update,
         get size() { return ship.size; },
         get center() { return ship.center; },
         // get rotation() { return ship.rotation; },
         get objects() {return {1: ship};},
         get ship() {return ship;},
-        get lasers() {return lasers;},
         particles: sendParticles,
-        moveForward: moveForward,
+        thrust: thrust,
         rotateLeft: rotateLeft,
-        rotateRight: rotateRight,
-        shoot: shoot,
-        laserUpdate: laserUpdate
+        rotateRight: rotateRight
     };
 
     return api;

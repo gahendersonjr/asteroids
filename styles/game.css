@@ -6,16 +6,18 @@ body
 
 #id-canvas
 {
+  width: 1000px;
+  height: 1000px;
     position: absolute;
     left: 0;
     top: 40px;
-    background: url('/assets/background.jpg')
+    background: url('../assets/background.jpg')
 }
 
 .button {
   height: 40px;
   background-color: black;
-  color: greenyellow;
+  color: white;
   font-family: "Courier New";
   font-size: 25px;
   padding-left: 10px;
@@ -24,7 +26,7 @@ body
 }
 
 .button:hover {
-  border: 2px solid greenyellow;
+  border: 2px solid white;
 }
 
 button:focus {outline:0;}
@@ -37,7 +39,7 @@ button:focus {outline:0;}
   position: absolute;
   right: 20px;
   top: 8px;
-  color: greenyellow;
+  color: white;
   font-family: "Courier New";
   font-size: 25px;
 }

@@ -5,15 +5,10 @@
     <title>asteroids</title>
     <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
 </head>
-<body onresize="resize()" onload="resize()">
-    <iframe src="./assets/silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
-    <audio autoplay loop>
-        <source src="./assets/HeroImmortal.mp3" type="audio/mp3" >
-    </audio>
+<body onload="setSize()">
     <div id="buttons">
       <button onclick="startGame()" class="button" id="startGame">start game</button>
       <button onclick="highScores()" class="button" id="highScores">high scores</button>
-      <button onclick="controls()" class="button" id="controls">controls</button>
       <button onclick="credits()" class="button" id="credits">credits</button>
     </div>
     <div id="score" class="inactive" onclick="gameOver()"></div>
@@ -31,8 +26,6 @@
     <script src = "scripts/render/graphics.js"></script>
     <script src = "scripts/render/systems.js"></script>
     <script src = "scripts/systems/particle-system.js"></script>
-    <script src = "scripts/systems/asteroids.js"></script>
-    <script src = "scripts/systems/ufo.js"></script>
     <script src = "scripts/game.js"></script>
 </body>
 </html>
