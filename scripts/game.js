@@ -151,7 +151,11 @@ function startGame(){
       function checkCollision(){
           for(let i=0; i<surface.length-1; i++){
             if(lineCircleIntersection(surface[i], surface[i+1])){
-              console.log("hit");
+              // console.log("hit");
+              if(!surface[i].safe || !surface[i+1].safe){
+                particlesFire.create(ship.ship.center.x, ship.ship.center.y);
+                particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+              }
             }
           }
       }

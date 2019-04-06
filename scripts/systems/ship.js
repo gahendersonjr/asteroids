@@ -12,8 +12,8 @@ MyGame.systems.Ship = function() {
     }
     function thrust(elapsedTime) {
             // Create a normalized direction vector
-            let vectorX = Math.cos(ship.rotation);
-            let vectorY = Math.sin(ship.rotation);
+            let vectorX = Math.cos(ship.rotation-90);
+            let vectorY = Math.sin(ship.rotation-90);
             // With the normalized direction vector, move the center of the sprite
             ship.center.x += (vectorX * ship.moveRate * elapsedTime);
             ship.center.y += (vectorY * ship.moveRate * elapsedTime);
