@@ -3,8 +3,9 @@ MyGame.systems.Ship = function() {
     const GRAVITY = 0.00000025 * WORLD_UNIT ;
     let particles = null;
     let ship = {
+        radius: WORLD_UNIT * 0.05 / 2,
         size: { x: WORLD_UNIT * 0.05, y: WORLD_UNIT * 0.05 },       // Size in pixels
-        center: { x: WORLD_UNIT * (1 - 0.25), y: WORLD_UNIT * (1- 0.90) },
+        center: { x: WORLD_UNIT *  0.25, y: WORLD_UNIT * (1- 0.90) },
         rotation: 0,
         moveRate: 0,         // Pixels per second
         rotateRate: 0.0015   // Radians per second
@@ -21,7 +22,6 @@ MyGame.systems.Ship = function() {
 
     function update(elapsedTime){
       ship.moveRate += GRAVITY;
-      console.log(ship.moveRate);
       ship.center.y += (elapsedTime * ship.moveRate * 1);
     }
 
@@ -44,6 +44,7 @@ MyGame.systems.Ship = function() {
         update: update,
         get size() { return ship.size; },
         get center() { return ship.center; },
+        get radius() {return ship.radius},
         // get rotation() { return ship.rotation; },
         get objects() {return {1: ship};},
         get ship() {return ship;},

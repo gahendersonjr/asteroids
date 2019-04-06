@@ -5,6 +5,15 @@ if(localStorage.getItem("asteroids.highs")){
   highs = localStorage.getItem("asteroids.highs").split(',');
 }
 
+let surface = [
+   { x: 0.00 * 800, y: 800-(0.00 * 800), safe: false },
+   { x: 0.25 * 800, y: 800-(0.25 * 800), safe: false },
+   { x: 0.40 * 800, y: 800-(0.10 * 800), safe: true },
+   { x: 0.70 * 800, y: 800-(0.10 * 800), safe: true },
+   { x: 0.80 * 800, y: 800-(0.45 * 800), safe: false },
+   { x: 1.00 * 800, y: 800-(0.00 * 800), safe: false },
+];
+
 function startGame(){
   document.getElementById("startGame").classList.add("inactive");
   document.getElementById("highScores").classList.add("inactive");
@@ -41,6 +50,7 @@ function startGame(){
           particlesFire.update(elapsedTime);
           particlesSmoke.update(elapsedTime);
           ship.update(elapsedTime);
+          checkCollision();
           if(!gameOver){
             let particles = ship.particles();
             if(particles){
@@ -75,6 +85,16 @@ function startGame(){
               document.getElementById("credits").classList.remove("inactive");
               document.getElementById("score").classList.add("inactive");
           }
+
+          context.beginPath();
+          context.moveTo(surface[0].x, surface[0].y);
+         for(let i=1; i<surface.length; i++){
+           context.lineTo(surface[i].x, surface[i].y);
+         }
+         context.fillStyle = "grey";
+         context.fill();
+         context.closePath();
+
       }
 
       function gameLoop(time) {
@@ -127,6 +147,39 @@ function startGame(){
            paused = !paused;
          }
       }
+
+      function checkCollision(){
+          for(let i=0; i<surface.length-1; i++){
+            if(lineCircleIntersection(surface[i], surface[i+1])){
+              console.log("hit");
+            }
+          }
+      }
+
+      function lineCircleIntersection(pt1, pt2) {
+
+        let v1 = { x: pt2.x - pt1.x, y: pt2.y - pt1.y };
+        let v2 = { x: pt1.x - ship.ship.center.x, y: pt1.y - ship.ship.center.y };
+        let b = -2 * (v1.x * v2.x + v1.y * v2.y);
+        let c =  2 * (v1.x * v1.x + v1.y * v1.y);
+        let d = Math.sqrt(b * b - 2 * c * (v2.x * v2.x + v2.y * v2.y - ship.ship.radius * ship.ship.radius));
+        // console.log(d);
+        if (isNaN(d)) { // no intercept;
+            return false;
+        }
+        // These represent the unit distance of point one and two on the line
+        let u1 = (b - d) / c;
+        let u2 = (b + d) / c;
+        if (u1 <= 1 && u1 >= 0) {  // If point on the line segment
+            return true;
+        }
+        if (u2 <= 1 && u2 >= 0) {  // If point on the line segment
+            return true;
+        }
+        return false;
+    }
+
+
   }(MyGame.systems, MyGame.input, MyGame.render, MyGame.graphics));
 }
 
