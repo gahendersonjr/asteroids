@@ -1,8 +1,8 @@
 let canvas = document.getElementById("id-canvas");
 let context = canvas.getContext("2d");
 let highs = [0,0,0,0,0];
-if(localStorage.getItem("asteroids.highs")){
-  highs = localStorage.getItem("asteroids.highs").split(',');
+if(localStorage.getItem("lander.highs")){
+  highs = localStorage.getItem("lander.highs").split(',');
 }
 
 let surface = [
@@ -89,7 +89,7 @@ function startGame(){
                 highs[i] = parseInt(highs[i]);
               }
               highs.sort(sortNumber);
-              localStorage.setItem("asteroids.highs", highs);
+              localStorage.setItem("lander.highs", highs);
           }
 
       }
@@ -153,13 +153,12 @@ function startGame(){
                 highs[i] = parseInt(highs[i]);
               }
               highs.sort(sortNumber);
-              localStorage.setItem("asteroids.highs", highs);
+              localStorage.setItem("lander.highs", highs);
             }
           }
       }
-
+      //modified version of example in exam description
       function lineCircleIntersection(pt1, pt2) {
-
         let v1 = { x: pt2.x - pt1.x, y: pt2.y - pt1.y };
         let v2 = { x: pt1.x - ship.ship.center.x, y: pt1.y - ship.ship.center.y };
         let b = -2 * (v1.x * v2.x + v1.y * v2.y);
