@@ -1,28 +1,42 @@
 MyGame.systems.Ship = function() {
-    const WORLD_UNIT = 800;
-    const GRAVITY = 0.00000025 * WORLD_UNIT ;
+    const MAP_SIZE = 800;
+    const GRAVITY = 0.003;
     let particles = null;
     let ship = {
-        radius: WORLD_UNIT * 0.05 / 2,
-        size: { x: WORLD_UNIT * 0.05, y: WORLD_UNIT * 0.05 },       // Size in pixels
-        center: { x: WORLD_UNIT *  0.25, y: WORLD_UNIT * (1- 0.90) },
-        rotation: 0,
-        moveRate: 0,         // Pixels per second
-        rotateRate: 0.0015   // Radians per second
+        radius: MAP_SIZE * 0.05 / 2,
+        size: { x: MAP_SIZE * 0.05, y: MAP_SIZE * 0.05 },       // Size in pixels
+        center: { x: MAP_SIZE *  0.25, y: MAP_SIZE * (1- 0.90) },
+        rotation: 3 * (Math.PI / 2),
+        // moveRate: 0,         // Pixels per second
+        thrustRate: .07,
+        rotateRate: 0.0015,   // Radians per second
+        downwardSpeed: 0,
+        fuel: 2000
     }
     function thrust(elapsedTime) {
+            if(ship.fuel<=0){
+              ship.fuel=0
+              return;
+            }
             // Create a normalized direction vector
             let vectorX = Math.cos(ship.rotation-90);
             let vectorY = Math.sin(ship.rotation-90);
             // With the normalized direction vector, move the center of the sprite
-            ship.center.x += (vectorX * ship.moveRate * elapsedTime);
-            ship.center.y += (vectorY * ship.moveRate * elapsedTime);
+            ship.center.x += (vectorX * ship.thrustRate * elapsedTime);
+            ship.center.y += (vectorY * ship.thrustRate * elapsedTime);
+            ship.downwardSpeed -= ship.thrustRate;
+            ship.downwardSpeed += GRAVITY;
+            ship.center.y += (elapsedTime * ship.downwardSpeed * 1);
+            if(ship.downwardSpeed<0){
+              ship.downwardSpeed = 0;
+            }
             particles = [ship.center.x, ship.center.y];
+            ship.fuel -= elapsedTime/3;
     }
 
     function update(elapsedTime){
-      ship.moveRate += GRAVITY;
-      ship.center.y += (elapsedTime * ship.moveRate * 1);
+      ship.downwardSpeed += GRAVITY;
+      ship.center.y += (elapsedTime * ship.downwardSpeed * 1);
     }
 
     function rotateLeft(elapsedTime) {
@@ -42,10 +56,11 @@ MyGame.systems.Ship = function() {
 
     let api = {
         update: update,
+        get downwardSpeed() {return ship.downwardSpeed;},
         get size() { return ship.size; },
         get center() { return ship.center; },
         get radius() {return ship.radius},
-        // get rotation() { return ship.rotation; },
+        get rotation() { return ship.rotation; },
         get objects() {return {1: ship};},
         get ship() {return ship;},
         particles: sendParticles,

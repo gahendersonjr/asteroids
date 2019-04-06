@@ -11,7 +11,11 @@
       <button onclick="highScores()" class="button" id="highScores">high scores</button>
       <button onclick="credits()" class="button" id="credits">credits</button>
     </div>
-    <div id="score" class="inactive" onclick="gameOver()"></div>
+    <div id="score" class="inactive">
+      <div id="fuel"></div>
+      <div id="speed"></div>
+      <div id="angle"></div>
+    </div>
     <canvas id = "id-canvas"></canvas>
     <script>
         let MyGame = {

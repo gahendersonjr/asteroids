@@ -23,7 +23,8 @@ function startGame(){
       'use strict';
       let score = 0;
       let speed = 0;
-      let angle = 0;
+      let degrees = 0;
+      let safeAngle=false;
 
       let paused = false;
       let gameOver = false;
@@ -46,10 +47,13 @@ function startGame(){
       }
 
       function update(elapsedTime) {
-          computeStatusString();
           particlesFire.update(elapsedTime);
           particlesSmoke.update(elapsedTime);
           ship.update(elapsedTime);
+          speed = parseInt(ship.ship.downwardSpeed*20);
+          score = parseInt(ship.ship.fuel);
+          computDegrees();
+          computeStatusString();
           checkCollision();
           if(!gameOver){
             let particles = ship.particles();
@@ -69,11 +73,15 @@ function startGame(){
           } else {
               context.fillStyle = "white";
               context.font = "25px Courier New";
-              context.fillText("game over", 20, 200);
-              context.fillText("you scored " + score, 40, 250);
-              if (score >= highs[4]){
-                context.fillText("you got a high score!", 40, 300);
-                highs[4]=score;
+              if (score==-1){
+                context.fillText("better luck next time!", 20, 200);
+              } else {
+                context.fillText("safe landing!", 20, 200);
+                context.fillText("you scored " + score, 40, 250);
+                if (score >= highs[4]){
+                  context.fillText("you got a high score!", 40, 300);
+                  highs[4]=score;
+                }
               }
               for(let i in highs){
                 highs[i] = parseInt(highs[i]);
@@ -112,14 +120,29 @@ function startGame(){
               context.fillText("press escape to quit", 40, 250);
               context.fillText("press space to continue", 40, 300);
           }
+          console.log(particlesFire.objects);
           if (!gameOver){
             requestAnimationFrame(gameLoop);
           }
       }
 
+      function computDegrees(){
+        degrees = (ship.ship.rotation * 180 / Math.PI) % 360;
+        if (degrees < 0){
+          degrees += 360;
+        }
+        if (degrees <=5 || degrees >= 355){
+          safeAngle=true;
+          document.getElementById("angle").style.color = "greenyellow";
+        } else{
+          document.getElementById("angle").style.color = "white";
+          safeAngle=false;
+        }
+      }
       function computeStatusString(){
-        let str = "fuel: " + score + " | speed: " + speed + " | angle: " + angle;
-        document.getElementById("score").innerText= str;
+        document.getElementById("fuel").innerText=  "fuel: " + score;
+        document.getElementById("speed").innerText= "speed: " + speed;
+        document.getElementById("angle").innerText= "angle: " + parseInt(degrees);
       }
 
       myKeyboard.register('w', ship.thrust);
@@ -151,10 +174,12 @@ function startGame(){
       function checkCollision(){
           for(let i=0; i<surface.length-1; i++){
             if(lineCircleIntersection(surface[i], surface[i+1])){
-              // console.log("hit");
-              if(!surface[i].safe || !surface[i+1].safe){
+              gameOver = true;
+              console.log(speed);
+              if(!surface[i].safe || !surface[i+1].safe || (degrees > 5 && degrees <355) || speed>2){
                 particlesFire.create(ship.ship.center.x, ship.ship.center.y);
                 particlesSmoke.create(ship.ship.center.x, ship.ship.center.y);
+                score = -1;
               }
             }
           }
@@ -218,3 +243,7 @@ function credits(){
 function sortNumber(a,b) {
         return b - a;
     }
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

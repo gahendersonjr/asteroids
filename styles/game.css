@@ -36,10 +36,26 @@ button:focus {outline:0;}
 }
 
 #score {
-  position: absolute;
-  right: 20px;
-  top: 8px;
   color: white;
   font-family: "Courier New";
   font-size: 25px;
+}
+
+#fuel {
+  left: 20px;
+  position: absolute;
+  top: 8px;
+  color: greenyellow;
+}
+
+#speed {
+  left: 175px;
+  position: absolute;
+  top: 8px;
+}
+
+#angle {
+  left: 340px;
+  position: absolute;
+  top: 8px;
 }
